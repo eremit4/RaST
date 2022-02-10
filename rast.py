@@ -1,5 +1,5 @@
 """
-RaST - Rapid Subdomain Take Over
+RaST - Rapid Subdomains Take Over
 Taking control over AWS subdomains with "NoSuchBucket" error.
 Author: Higor Melgaço
 Date: 07/02/2022
@@ -21,7 +21,7 @@ messages = {
         "error": "{}[{}!{}] ~ An error occurred: {}{}"
     },
     "argparser": {
-        'desc_general': 'RaST - Rapid Subdomain Take Over\nTaking control over AWS subdomains with "NoSuchBucket" error.',
+        'desc_general': 'RaST - Rapid Subdomains Take Over: Taking control over AWS subdomains with "NoSuchBucket" error.',
         'address': 'A single subdomain url to take control',
         'file': 'A file with subdomains urls to take control',
         'take_over': 'Creates the buckets with the name contained in the "NoSuchBucket" error and uploads a file to evidence the PoC',
@@ -34,13 +34,13 @@ messages = {
                    )
                    (                 
             /\  .-"""-.  /\          *--------------------------------------* 
-           //\\/  ,,,  \//\\         |   RaST - Rapid Subdomains Take Over  |
-           |/\| ,;;;;;, |/\|         |  Taking control over AWS subdomains  |
+           //\\/  ,,,  \//\\         |   {}RaST - Rapid Subdomains Take Over{}  |
+           |/\| ,;;;;;, |/\|         |  {}Taking control over AWS subdomains{}  |
            //\\\;-"""-;///\\         *--------------------------------------*
-          //  \/       \/  \\        |        eremit4@protonmail.com        | 
-         (| ,-_|       |_-, |)       |              SP/Brazil               |
+          //  \/       \/  \\        |        {}eremit4@protonmail.com{}        | 
+         (| ,-_|       |_-, |)       |              {}SP/Brazil{}               |
            //`__\.-.-./__`\\         *--------------------------------------*
-          // /.-({}() (){})-.\ \\
+          // /.-({}O{}\ /{}O{})-.\ \\
          (\ |)   '---'   (| /)
           ` (|           |) `
             \)           (/
@@ -84,7 +84,19 @@ if __name__ == "__main__":
     group_optional.add_argument("-h", "--help", help=messages["argparser"]["help"], action="help", default=SUPPRESS)
 
     try:
-        print(messages['logo'].format(Fore.LIGHTWHITE_EX, Fore.LIGHTRED_EX, Fore.LIGHTWHITE_EX))
+        print(messages['logo'].format(Fore.LIGHTWHITE_EX,
+                                      Fore.RED,
+                                      Fore.LIGHTWHITE_EX,
+                                      Fore.RED,
+                                      Fore.LIGHTWHITE_EX,
+                                      Fore.RED,
+                                      Fore.LIGHTWHITE_EX,
+                                      Fore.RED,
+                                      Fore.LIGHTWHITE_EX,
+                                      Fore.LIGHTRED_EX,
+                                      Fore.LIGHTWHITE_EX,
+                                      Fore.LIGHTRED_EX,
+                                      Fore.LIGHTWHITE_EX))
         main(args.parse_args())
     except KeyboardInterrupt:
         print(messages["logs"]["key_interrupt"].format(Fore.LIGHTWHITE_EX, Fore.LIGHTRED_EX, Fore.LIGHTWHITE_EX))
