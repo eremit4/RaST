@@ -301,6 +301,9 @@ def main(arguments: ArgumentParser.parse_args) -> None:
                                                                           url,
                                                                           Fore.LIGHTWHITE_EX))
 
+        # removes index.html file after the successful takeover procedure
+        remove(path.join(getcwd(), 'index.html'))
+
 
 if __name__ == "__main__":
     arg_style = lambda prog: CustomHelpFormatter(prog)
