@@ -7,15 +7,15 @@ Date: 07/02/2022
 
 from json import loads
 from requests import get
-from requests.packages.urllib3 import disable_warnings
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from colorama import init, Fore
 from random import choice
 from datetime import datetime
+from colorama import init, Fore
 from os import path, getcwd, remove
 from boto3 import client as boto3_client
 from traceback import format_exc as print_traceback
 from argparse import ArgumentParser, SUPPRESS, HelpFormatter
+from requests.packages.urllib3 import disable_warnings
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
 configs = {
@@ -74,6 +74,9 @@ configs = {
         "creating_s3": "\t\t{}[{}>{}] ~ Creating S3 bucket with {}<{}>{} name",
         "uploading_file": "\t\t{}[{}>{}] ~ Uploading the file to perform the PoC",
         "takeover_complete": "\t\t{}[{}>{}] ~ Successfully taken control of {}<{}>{} subdomain",
+        "collecting_buckets": "\t{}[{}>{}] ~ Collecting evidences from your AWS account",
+        "no_evidence": "\t\t{}[{}>{}] ~ No evidence found",
+        "evidence_removed": "\t\t{}[{}>{}] ~ The {}<{}>{} bucket and its {}<{}>{} object were successfully removed",
         "error": "{}[{}!{}] ~ An error occurred: {}{}",
         "key_interrupt": "{}[{}!{}] ~ Well, it looks like someone interrupted the execution...",
         "timeout_error": "{}[{}!{}] ~ A timeout error occurred when checking the url {}<{}>{}",
@@ -83,10 +86,10 @@ configs = {
     },
     "argparser": {
         "desc_general": "RaST - Rapid Subdomains Take Over: Taking control over AWS subdomains with 'NoSuchBucket' error.",
-        "address": "A single subdomain url to take control",
-        "file": "A file with subdomains urls to take control",
+        "address": "A single url",
+        "file": "A file with urls",
         "take_over": "Creates the buckets with the name contained in the 'NoSuchBucket' error and uploads a file to evidence the PoC",
-        "clear_s3": "Clears all the buckets in the AWS account used",
+        "clear_s3": "Clears all buckets and objects in the AWS account used",
         "help": "Show this help message and exit."
     },
     "logo": r'''
@@ -157,7 +160,7 @@ def acquire_aws_credentials() -> dict:
     open the config.json to get the aws credentials
     :return: a json with aws credentials
     """
-    with open(path.join(getcwd(), 'config.json'), 'r') as config_file:
+    with open(path.join(getcwd(), 'configs', 'config.json'), 'r') as config_file:
         return loads(config_file.read())
 
 
@@ -249,6 +252,36 @@ def submit_poc_file(boto_client: boto3_client, bucket_name: str) -> bool:
         return False
 
 
+def clear_evidences_in_account(boto_client: boto3_client) -> None:
+    """
+    clears all evidence of PoC in your aws account
+    :param boto_client: boto3 s3 client
+    :return: None
+    """
+    print(configs['logs']['collecting_buckets'].format(Fore.LIGHTWHITE_EX, Fore.LIGHTRED_EX, Fore.LIGHTWHITE_EX))
+    buckets_list = boto_client.list_buckets()
+    if not buckets_list.get('Buckets'):
+        print(configs['logs']['no_evidence'].format(Fore.LIGHTWHITE_EX, Fore.LIGHTRED_EX, Fore.LIGHTWHITE_EX))
+        return
+    for bucket in buckets_list['Buckets']:
+        # listing objects on bucket
+        bucket_object = boto_client.list_objects_v2(Bucket=bucket['Name'])
+        # removing bucket object
+        boto_client.delete_object(Bucket=bucket['Name'],
+                                  Key=bucket_object['Contents'][0]['Key'])
+        # removing bucket itself
+        boto_client.delete_bucket(Bucket=bucket['Name'])
+        print(configs['logs']['evidence_removed'].format(Fore.LIGHTWHITE_EX,
+                                                         Fore.LIGHTRED_EX,
+                                                         Fore.LIGHTWHITE_EX,
+                                                         Fore.LIGHTRED_EX,
+                                                         bucket['Name'],
+                                                         Fore.LIGHTWHITE_EX,
+                                                         Fore.LIGHTRED_EX,
+                                                         bucket_object['Contents'][0]['Key'],
+                                                         Fore.LIGHTWHITE_EX))
+
+
 def main(arguments: ArgumentParser.parse_args) -> None:
     """
     Execute the main function
@@ -261,9 +294,6 @@ def main(arguments: ArgumentParser.parse_args) -> None:
                              aws_access_key_id=aws_credentials.get('ACCESS_KEY_ID'),
                              aws_secret_access_key=aws_credentials.get('SECRET_ACCESS_KEY'),
                              region_name=aws_credentials.get('REGION'))
-    if arguments.clear:
-        # removing all buckets in our account
-        return
 
     if arguments.takeover:
         urls = get_targets(arguments)
@@ -304,6 +334,9 @@ def main(arguments: ArgumentParser.parse_args) -> None:
         # removes index.html file after the successful takeover procedure
         remove(path.join(getcwd(), 'index.html'))
 
+    if arguments.clear:
+        clear_evidences_in_account(boto_client=s3_client)
+
 
 if __name__ == "__main__":
     arg_style = lambda prog: CustomHelpFormatter(prog)
@@ -312,7 +345,7 @@ if __name__ == "__main__":
     group_required.add_argument("-a", "--address", metavar="address", type=str, help=configs["argparser"]["address"])
     group_required.add_argument("-f", "--file", metavar="file", type=str, help=configs["argparser"]["file"])
     group_required.add_argument("-t", "--take-over", dest='takeover', action='store_true', help=configs["argparser"]["take_over"])
-    group_required.add_argument("-c", "--clear-buckets", dest='clear', action='store_true', help=configs["argparser"]["clear_s3"])
+    group_required.add_argument("-c", "--clear-evidences", dest='clear', action='store_true', help=configs["argparser"]["clear_s3"])
     group_optional = args.add_argument_group(title="optional arguments")
     group_optional.add_argument("-h", "--help", help=configs["argparser"]["help"], action="help", default=SUPPRESS)
 
