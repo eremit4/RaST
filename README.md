@@ -17,6 +17,16 @@ Install the libraries:
 python -m pip install -r requirements.txt
 ```
 
+## 🕶️ Prerequisites
+Insert your AWS credentials in configs/config.json
+```bash
+{
+  "ACCESS_KEY_ID": "",
+  "SECRET_ACCESS_KEY": "",
+  "REGION": ""
+}
+```
+
 ## 🕸️ Using RaST
 
 Run the program:
