@@ -1,6 +1,6 @@
-#  RaST - Rapid Subdomain Take Over
+#  RaST - Rapid Subdomain Takeover
 
-> This program is designed to create a proof of concept for the subdomain take over vulnerability on pages hosted on AWS. The program checks if the "NoSuchBucket" error exists on the page and then creates a bucket with the same name and submits an index.html file for this bucket to consolidate the PoC.
+> This program is designed to create a proof of concept for the subdomain takeover vulnerability on pages hosted on AWS. The program checks if the "NoSuchBucket" error exists on the page and then creates a bucket with the same name and submits an index.html file for this bucket to consolidate the PoC.
 > It is important to note that this program was created for a proof of concept. Any malicious action is the sole responsibility of the agent who performed it.
 
 ## 🕷️ Installing RaST
