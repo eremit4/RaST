@@ -1,10 +1,3 @@
-"""
-RaST - Rapid Subdomains Take Over
-Taking control over AWS subdomains with "NoSuchBucket" error.
-Author: Higor Melgaço
-Date: 07/02/2022
-"""
-
 from json import loads
 from requests import get
 from random import choice
