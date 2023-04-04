@@ -85,7 +85,7 @@ configs = {
         "error_sending_file": "\t\t{}[{}!{}] ~ An error occurred when sending PoC file to bucket {}<{}>{}: {}{}"
     },
     "argparser": {
-        "desc_general": "RaST - Rapid Subdomains Take Over: Taking control over AWS subdomains with 'NoSuchBucket' error.",
+        "desc_general": "RaST - Rapid Subdomains Takeover: Taking control over AWS subdomains with 'NoSuchBucket' error.",
         "address": "A single url",
         "file": "A file with urls",
         "take_over": "Creates the buckets with the name contained in the 'NoSuchBucket' error and uploads a file to evidence the PoC",
@@ -98,7 +98,7 @@ configs = {
                    )
                    (                 
             /\  .-"""-.  /\          *--------------------------------------* 
-           //\\/  ,,,  \//\\         |   {}RaST - Rapid Subdomains Take Over{}  |
+           //\\/  ,,,  \//\\         |   {}RaST - Rapid Subdomains Takeover{}   |
            |/\| ,;;;;;, |/\|         |  {}Taking control over AWS subdomains{}  |
            //\\\;-"""-;///\\         *--------------------------------------*
           //  \/       \/  \\        |        {}eremit4@protonmail.com{}        | 
